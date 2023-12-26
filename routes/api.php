@@ -15,6 +15,11 @@ use App\Http\Controllers\OrderDetailController;
 use App\Http\Controllers\CartController;
 
 
+// Route::get('/', function () {
+//     return response()->json([
+//         'message' => 'Welcome App Api test'
+//     ]);
+// });
 
 
 Route::middleware('web')->get('/csrf-token', function () {
@@ -42,7 +47,6 @@ Route::post('/register', [AuthController::class, 'register']);
 // Route::post('/register', [AuthController::class, 'register']);
 
 Route::get('/products', [ProductController::class, 'index']);
-
 //Public Routes
 Route::get('/category/{category_id}', [CategoryController::class, 'search']);
 Route::get('/category', [CategoryController::class, 'index']);
@@ -59,17 +63,18 @@ Route::get('/review', [ReviewController::class, 'index']);
 
 Route::get('/my-cart/{id}', [CartController::class, 'getAllProductInCart']);
 
-
-
 //Protected Routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/category', [CategoryController::class, 'store']);
     Route::delete('/category/{id}', [CategoryController::class, 'destroy']);
 
-    Route::get('/session-status', function () {
-        // If the user is authenticated, return a success status.
-        return response()->json(['status' => 'success']);
-    });
+    //create a route for the check session function in AuthController
+
+    // Route::get('/session-status', function () {
+    //     // If the user is authenticated, return a success status.
+    //     return response()->json(['status' => 'success']);
+    // });
+    Route::get('/check-session', [AuthController::class, 'checkSession']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::put('/product/{id}', [ProductController::class, 'update']);
@@ -100,6 +105,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/payments/{id}', [PaymentController::class, 'destroy']);
 
     Route::get('/purchases', [PurchaseController::class, 'index']);
-});
 
-Route::get('/pay/{id}', [PaymentController::class, 'payViaGcash']);
+    Route::get('/pay/{id}', [PaymentController::class, 'payViaGcash']);
+});

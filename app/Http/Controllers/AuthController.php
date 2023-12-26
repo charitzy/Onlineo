@@ -79,4 +79,16 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'User not authenticated'], 401);
     }
+
+    //create a check session function
+    public function checkSession(Request $request)
+    {
+        // Get user from the token
+        $user = $request->user();
+        if ($user) {
+            return response()->json(['message' => 'User authenticated'], 200);
+        }
+
+        return response()->json(['message' => 'User not authenticated'], 401);
+    }
 }

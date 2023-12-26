@@ -12,7 +12,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::with('products')->get();
         return response()->json($categories); // Return data as JSON
     }
 
@@ -26,6 +26,7 @@ class CategoryController extends Controller
     {
         $request->validate([
             'category_name' => 'required|unique:category',
+            'image_url' => 'nullable|url'
         ]);
 
         return Category::create($request->all());
@@ -36,7 +37,7 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        $category = Category::findOrFail($id);
+        $category = Category::findOrFail($id)->with('product')->get();;
 
         return $category;
     }
@@ -46,11 +47,20 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function search($category_name)
+    public function search($category_id)
     {
-        $categories = Category::where('category_name', 'LIKE', '%' . $category_name . '%')->get();
+        // Find the category by ID and load the products relationship
+        $category = Category::with('products')->find($category_id);
 
-        return response()->json(['data' => $categories]);
+        // Check if the category was found
+        if (!$category) {
+            // If no category is found, you can return a not found response
+            return response()->json(['message' => 'Category not found'], 404);
+        }
+
+        // Return the associated products with the category
+        // Since you're using Eloquent's eager loading, the products are already loaded
+        return response()->json($category->products);
     }
 
 
